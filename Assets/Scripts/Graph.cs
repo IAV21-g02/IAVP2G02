@@ -212,9 +212,17 @@ namespace UCM.IAV.Navegacion
                     break;
                 }
 
-                List<Vertex> connetctions = neighbors[current.nodo.id];
-                foreach(Vertex conect in connetctions)
+                List<NodeRecord> connetctions;
+                List<Vertex> auxList = neighbors[current.nodo.id];
+            
+                foreach(Vertex conect in auxList)
                 {
+                    NodeRecord n = new NodeRecord();
+                    n.nodo = conect;
+
+                    float endNodeConst = current.costSoFar + h(current.nodo, conect);
+                    n.costSoFar = endNodeConst;
+                    //if(close.Contains(conect))
 
 
                 }
