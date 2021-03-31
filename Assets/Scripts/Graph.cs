@@ -163,9 +163,63 @@ namespace UCM.IAV.Navegacion
             return new List<Vertex>();
         }
 
+        public struct NodeRecord
+        {
+            public Vertex nodo;
+            public List<Vertex> connection;
+            public float costSoFar;
+            public float estimatedTotalCost;
+
+        }
+
+        public class Minor: IComparer<NodeRecord>
+        {
+            public int Compare(NodeRecord a, NodeRecord b)
+            {
+                if (a.estimatedTotalCost < b.estimatedTotalCost) return 1;
+                else return 0;
+            }
+        }
+      
+
+        
+
+
+
         public List<Vertex> GetPathAstar(GameObject srcO, GameObject dstO, Heuristic h = null)
         {
             // IMPLEMENTACIÓN DEL ALGORITMO A*
+            NodeRecord nodo = new NodeRecord();
+            nodo.connection = null;
+            nodo.costSoFar = 0;
+            Vertex src = GetNearestVertex(srcO.transform.position);
+            Vertex dst = GetNearestVertex(dstO.transform.position);
+            nodo.estimatedTotalCost = h(src, dst);
+            nodo.nodo = src;
+
+            
+            List<NodeRecord> open = new List<NodeRecord>();
+            open.Add(nodo);
+            List<NodeRecord> close = new List<NodeRecord>();
+            Minor m = new Minor();
+            open.Sort(m);
+
+            while(open.Count > 0)
+            {
+                NodeRecord current = open[0];
+                if(current.nodo == dst)
+                {
+                    break;
+                }
+
+                List<Vertex> connetctions = neighbors[current.nodo.id];
+                foreach(Vertex conect in connetctions)
+                {
+
+
+                }
+            }
+
             return new List<Vertex>();
         }
 
