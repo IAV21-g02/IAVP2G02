@@ -7,7 +7,7 @@
 
     Modificaciones:
         Copyright (C) 2020-2021 Federico Peinado
-        http://www.federicopeinado.com
+        http://www.federicodespeinado.com
 
         Este fichero forma parte del material de la asignatura Inteligencia Artificial para Videojuegos.
         Esta asignatura se imparte en la Facultad de Informática de la Universidad Complutense de Madrid (España).
@@ -19,6 +19,7 @@ namespace UCM.IAV.Navegacion
     using UnityEngine;
     using System.Collections;
     using System.Collections.Generic;
+    using priority_queue;
 
     /// <summary>
     /// Abstract class for graphs
@@ -31,6 +32,7 @@ namespace UCM.IAV.Navegacion
         protected List<List<Vertex>> neighbors;
         protected List<List<float>> costs;
         protected Dictionary<int, int> instIdToId;
+        private GameObject minotaur;
 
         //// this is for informed search like A*
         public delegate float Heuristic(Vertex a, Vertex b);
@@ -42,6 +44,7 @@ namespace UCM.IAV.Navegacion
         public virtual void Start()
         {
             Load();
+            minotaur = GameObject.FindGameObjectWithTag("Minotaur");
         }
 
         public virtual void Load() { }
@@ -181,53 +184,99 @@ namespace UCM.IAV.Navegacion
             }
         }
       
-
-        
-
-
-
         public List<Vertex> GetPathAstar(GameObject srcO, GameObject dstO, Heuristic h = null)
         {
-            // IMPLEMENTACIÓN DEL ALGORITMO A*
-            NodeRecord nodo = new NodeRecord();
-            nodo.connection = null;
-            nodo.costSoFar = 0;
+            //Comprobación de GOs
+            if (!srcO|| !dstO)
+                return new List<Vertex>();
+
+            //Si no se le pasa ninguna heurística, entonces se coge una por defecto
+            if (ReferenceEquals(h, null))
+                h = EuclidDist;
+
+            //Asignación de GOs. Son los vértices más cercanos al GO src
             Vertex src = GetNearestVertex(srcO.transform.position);
             Vertex dst = GetNearestVertex(dstO.transform.position);
-            nodo.estimatedTotalCost = h(src, dst);
-            nodo.nodo = src;
 
+            //Vertices del minotauro
             
-            List<NodeRecord> open = new List<NodeRecord>();
-            open.Add(nodo);
-            List<NodeRecord> close = new List<NodeRecord>();
-            Minor m = new Minor();
-            open.Sort(m);
+            Vertex minoVertex = GetNearestVertex(minotaur.transform.position);
+            Edge[] minoEdges = GetEdges(minoVertex);
 
-            while(open.Count > 0)
+            //Cola de prioridad de los nodos y sus costes
+            Priority_Queue<Edge> pqEdge = new Priority_Queue<Edge>();
+            Edge[] edges;
+            Edge node, child;
+            
+            //Array de distancias
+            float[] distances = new float[vertices.Count];
+            //Array del vértice anterior
+            int[] prevVertex = new int[vertices.Count];
+
+            //Nodo inicial con distancia = 0
+            node = new Edge(src, 0);
+            pqEdge.Add(node);
+            distances[src.id] = 0;
+            prevVertex[src.id] = src.id;
+
+            //Inicialización del resto de vértices, con valores por defecto
+            //para que, posteriormente, se actualicen
+            for (int i = 0; i < vertices.Count; i++)
             {
-                NodeRecord current = open[0];
-                if(current.nodo == dst)
+                if (i != src.id)
                 {
-                    break;
-                }
-
-                List<NodeRecord> connetctions;
-                List<Vertex> auxList = neighbors[current.nodo.id];
-            
-                foreach(Vertex conect in auxList)
-                {
-                    NodeRecord n = new NodeRecord();
-                    n.nodo = conect;
-
-                    float endNodeConst = current.costSoFar + h(current.nodo, conect);
-                    n.costSoFar = endNodeConst;
-                    //if(close.Contains(conect))
-
-
+                    prevVertex[i] = -1;
+                    distances[i] = Mathf.Infinity;
                 }
             }
 
+            //Bucle ppal
+            while (!pqEdge.Empty())
+            {
+                //Obtenemos el nodo más prioritario
+                node = pqEdge.Remove();
+                int nodeId = node.vertex.id;
+                
+
+                //Si es el que se busca, devolvemos el camino construido
+                if (ReferenceEquals(node.vertex, dst))
+                {
+                    return BuildPath(src.id, node.vertex.id, ref prevVertex);
+                }
+
+                //Se guardan los nodos vecinos del nodo actual y se recorren
+                edges = GetEdges(node.vertex);
+                foreach (Edge neigh in edges)
+                {
+                    int nID = neigh.vertex.id;
+                    //Si es != -1 es que ha sido visitado, por tanto se le salta
+                    //Si es la casilla del minotauro, tampoco se cuenta
+                    if (prevVertex[nID] == -1 || neigh.vertex != minoVertex)
+                    {
+                        //Se calcula el coste del nodo
+                        float cost = distances[nodeId] + neigh.cost;
+                        //Se comprueba si es una de las casillas vecinas al minotauro
+                        //de manera que si es así, entonces aumenta 5 veces su coste
+                        foreach (Edge mino in minoEdges) {
+                            if (neigh == mino) cost *= 5;
+                        }
+
+                        //Se le suma el coste estimado al coste del nodo
+                        cost += h(node.vertex, neigh.vertex);
+
+                        //Si el coste es menor que el que ya estaba almacenado,
+                        //entonces es mejor solución
+                        if (cost < distances[neigh.vertex.id])
+                        {
+                            distances[nID] = cost;
+                            prevVertex[nID] = nodeId;
+                            pqEdge.Remove(neigh);
+                            child = new Edge(neigh.vertex, cost);
+                            pqEdge.Add(child);
+                        }
+                    }
+                }
+            }
             return new List<Vertex>();
         }
 

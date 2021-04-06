@@ -38,57 +38,59 @@ namespace UCM.IAV.Navegacion
         public float pathNodeRadius = .3f;
 
         Camera mainCamera;
-        GameObject srcObj;
-        GameObject dstObj;
+        GameObject player;
+        PlayerMovable mov;
+        GameObject exit;
         List<Vertex> path; // La variable con el camino calculado
 
         // Despertar inicializando esto
         void Awake()
         {
             mainCamera = Camera.main;
-            srcObj = null;
-            dstObj = null;
             path = new List<Vertex>();
         }
 
+        private void Start()
+        {
+            player = GameObject.FindGameObjectWithTag("Player");
+            mov = player.GetComponent<PlayerMovable>();
+            exit = GameObject.Find("Salida");
+        }
         // Update is called once per frame
         void Update()
         {
-            // El origen se marca haciendo click
-            if (Input.GetMouseButtonDown(0))
-            {
-                srcObj = GetNodeFromScreen(Input.mousePosition);
-            }
-            // El destino simplemente poniendo el ratón encima
-            dstObj = GetNodeFromScreen(Input.mousePosition);
-
             // Con la barra espaciadora se activa la búsqueda del camino mínimo
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                // Si hay ya camino calculado, la muestro en color blanco, y borro la variable con el camino
+                // Si hay ya camino calculado, la muestro en color rojo, y borro la variable con el camino
                 if (path.Count != 0)
                 {
-                    ShowPath(path, Color.white);
+                    ShowPath(path, Color.red);
                     path = new List<Vertex>();
                 }
                 switch (algorithm)
                 {
                     case TesterGraphAlgorithm.ASTAR:
-                        path = graph.GetPathAstar(srcObj, dstObj, null); // Se pasa la heurística
+                        path = graph.GetPathAstar(this.player, exit, graph.ManhattanDist); // Se pasa la heurística
                         break;
                     default:
                     case TesterGraphAlgorithm.BFS:
-                        path = graph.GetPathBFS(srcObj, dstObj);
+                        path = graph.GetPathBFS(this.player, exit);
                         break;
                     case TesterGraphAlgorithm.DFS:
-                        path = graph.GetPathDFS(srcObj, dstObj);
+                        path = graph.GetPathDFS(this.player, exit);
                         break;
                     case TesterGraphAlgorithm.DIJKSTRA:
-                        path = graph.GetPathDijkstra(srcObj, dstObj);
+                        path = graph.GetPathDijkstra(this.player, exit);
                         break;
                 }
                 if (smoothPath)
                     path = graph.Smooth(path); // Suavizar el camino, una vez calculado
+
+                mov.AddExitPath(path);
+            }
+            else if (Input.GetKeyUp(KeyCode.Space)) { 
+                ClearPath();
             }
         }
 
@@ -102,16 +104,16 @@ namespace UCM.IAV.Navegacion
                 return;
 
             Vertex v;
-            if (!ReferenceEquals(srcObj, null))
+            if (!ReferenceEquals(player, null))
             {
                 Gizmos.color = Color.green; // Verde es el nodo inicial
-                v = graph.GetNearestVertex(srcObj.transform.position);
+                v = graph.GetNearestVertex(player.transform.position);
                 Gizmos.DrawSphere(v.transform.position, pathNodeRadius);
             }
-            if (!ReferenceEquals(dstObj, null))
+            if (!ReferenceEquals(exit, null))
             {
                 Gizmos.color = Color.red; // Rojo es el color del nodo de destino
-                v = graph.GetNearestVertex(dstObj.transform.position);
+                v = graph.GetNearestVertex(exit.transform.position);
                 Gizmos.DrawSphere(v.transform.position, pathNodeRadius);
             }
             int i;
@@ -143,7 +145,9 @@ namespace UCM.IAV.Navegacion
                 r.material.color = color;
             }
         }
-        
+
+        void ClearPath() { 
+        }
         // Cuantificación, cómo traduce de posiciones del espacio (la pantalla) a nodos
         private GameObject GetNodeFromScreen(Vector3 screenPosition)
         {

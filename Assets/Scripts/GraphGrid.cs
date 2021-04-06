@@ -7,7 +7,7 @@
 
     Modificaciones:
         Copyright (C) 2020-2021 Federico Peinado
-        http://www.federicopeinado.com
+        http://www.federicodespeinado.com
 
         Este fichero forma parte del material de la asignatura Inteligencia Artificial para Videojuegos.
         Esta asignatura se imparte en la Facultad de Informática de la Universidad Complutense de Madrid (España).
@@ -116,14 +116,19 @@ namespace UCM.IAV.Navegacion
                                 vertexObjs[id] = Instantiate(vertexPrefab, position, Quaternion.identity) as GameObject;
                                 Vector3 aux = position;
                                 aux.y += 1;
-                                if (casilla == TypeOfBox.Enter) 
+                                if (casilla == TypeOfBox.Enter)
+                                {
+                                    vertexObjs[id].name = "Salida";
                                     Instantiate(playerPrefab, aux, Quaternion.identity);
-                                else if(casilla == TypeOfBox.Minotaur) 
+                                }
+                                else if (casilla == TypeOfBox.Minotaur)
                                     Instantiate(minotaurPrefab, aux, Quaternion.identity);
                             }
                             else
+                            {
                                 vertexObjs[id] = Instantiate(obstaclePrefab, position, Quaternion.identity) as GameObject;
-                            
+                            }
+
                             vertexObjs[id].name = vertexObjs[id].name.Replace("(Clone)", id.ToString());
                             Vertex v = vertexObjs[id].AddComponent<Vertex>();
                             v.id = id;

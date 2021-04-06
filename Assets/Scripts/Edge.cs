@@ -7,7 +7,7 @@
 
     Modificaciones:
         Copyright (C) 2020-2021 Federico Peinado
-        http://www.federicopeinado.com
+        http://www.federicodespeinado.com
 
         Este fichero forma parte del material de la asignatura Inteligencia Artificial para Videojuegos.
         Esta asignatura se imparte en la Facultad de Informática de la Universidad Complutense de Madrid (España).
