@@ -56,18 +56,14 @@ namespace UCM.IAV.Navegacion
             mov = player.GetComponent<PlayerMovable>();
             exit = GameObject.Find("Salida");
         }
+
         // Update is called once per frame
         void Update()
         {
             // Con la barra espaciadora se activa la búsqueda del camino mínimo
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                // Si hay ya camino calculado, la muestro en color rojo, y borro la variable con el camino
-                if (path.Count != 0)
-                {
-                    ShowPath(path, Color.red);
-                    path = new List<Vertex>();
-                }
+                Debug.Log("Space Down");
                 switch (algorithm)
                 {
                     case TesterGraphAlgorithm.ASTAR:
@@ -87,10 +83,21 @@ namespace UCM.IAV.Navegacion
                 if (smoothPath)
                     path = graph.Smooth(path); // Suavizar el camino, una vez calculado
 
+                ShowPath(path, Color.red);
+                mov.SetPlayerAsKinematicObject(true);
                 mov.AddExitPath(path);
+
             }
-            else if (Input.GetKeyUp(KeyCode.Space)) { 
-                ClearPath();
+            else if (Input.GetKey(KeyCode.Space)){
+                Debug.Log("Space");
+                mov.MoveToExit(graph.GetNearestVertex(mov.gameObject.transform.position));
+            }
+            else if (Input.GetKeyUp(KeyCode.Space))
+            {
+                Debug.Log("Space Up");
+                mov.SetPlayerAsKinematicObject(false);
+                ShowPath(path, Color.white);
+                path.Clear();
             }
         }
 
@@ -146,8 +153,6 @@ namespace UCM.IAV.Navegacion
             }
         }
 
-        void ClearPath() { 
-        }
         // Cuantificación, cómo traduce de posiciones del espacio (la pantalla) a nodos
         private GameObject GetNodeFromScreen(Vector3 screenPosition)
         {

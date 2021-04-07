@@ -11,10 +11,16 @@ public class PlayerMovable : MonoBehaviour
     private Vector3 velocity;
     List<Vertex> path; // La variable con el camino calculado
     int index = 0;
-    bool IA = false;
 
-    [Tooltip("Combinar por peso.")]
+    //Variable que sirve para almacenar el transform de la casilla a la que nos tenemos que
+    //mover cuando la IA maneja nuestro movimiento
+    private Transform dest;
+
+    [Tooltip("Velocidad maxima de movimiento por fisica.")]
     public float maxVelocity;
+
+    [Tooltip("Velocidad maxima de movimiento por IA")]
+    public float maxIAVelocity;
 
     // Start is called before the first frame update
     void Start()
@@ -26,54 +32,54 @@ public class PlayerMovable : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey(KeyCode.Space))
-        {
-            //El jugador empieza a avanzar hasta la casilla de salida
-            MoveToExit();
-            Debug.Log("MOVEMENT");
-        }
-        else if (Input.GetKeyUp(KeyCode.Space))
-        {
-            IA = false;
 
-            Debug.Log("IA FALSE");
-        }
-
-        if (!IA)
+        if (!rb.isKinematic)
         {
             velocity.x = Input.GetAxis("Horizontal");
             velocity.z = Input.GetAxis("Vertical");
             velocity *= maxVelocity;
+            Debug.Log(velocity);
         }
+    }
+
+    public void SetPlayerAsKinematicObject(bool kinematic)
+    {
+        rb.isKinematic = kinematic;
     }
 
     public void AddExitPath(List<Vertex> exit)
     {
         path = exit;
         index = path.Count - 1;
-        IA = true;
+        dest = path[index].GetComponent<Transform>();
     }
 
-    void MoveToExit()
+
+    public void MoveToExit(Vertex currPlayerVert)
     {
         Vertex next = path[index];
-        Transform dest = next.GetComponent<Transform>();
-        transform.Translate((dest.position - transform.position) * Time.deltaTime);
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (IA && collision.gameObject == path[index].gameObject)
+        if (currPlayerVert == next && index > 0)
         {
-            index--;
-            Vertex v = path[index];
-            Renderer r = v.GetComponent<Renderer>();
+            Debug.Log("Llegamos al objetivo");
+            Renderer r = next.GetComponent<Renderer>();
             r.material.color = Color.white;
+            index--;
+            next = path[index];
+            dest = next.GetComponent<Transform>();
         }
+
+        Vector3 dir = (dest.position - transform.position).normalized;
+        dir *= maxIAVelocity;
+        dir.y = 0;
+
+        transform.Translate(dir * Time.deltaTime);
     }
 
     private void FixedUpdate()
     {
-        rb.AddForce(velocity, ForceMode.Force);
+        if (!rb.isKinematic)
+        {
+            rb.AddForce(velocity, ForceMode.Force);
+        }
     }
 }
