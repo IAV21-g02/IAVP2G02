@@ -20,6 +20,7 @@ namespace UCM.IAV.Navegacion
     using System.Collections;
     using System.Collections.Generic;
     using priority_queue;
+    using UnityEngine.UI;
 
     /// <summary>
     /// Abstract class for graphs
@@ -34,6 +35,13 @@ namespace UCM.IAV.Navegacion
         protected Dictionary<int, int> instIdToId;
         private GameObject minotaur;
 
+        private List<Vertex> allMinoVertex;
+        private int nodesExplored = 0;
+        private float timeToExplore = 0.0f;
+        Text[] dataText;
+
+        public List<Vertex> GetMinotaurVertex() { return allMinoVertex; }
+
         //// this is for informed search like A*
         public delegate float Heuristic(Vertex a, Vertex b);
 
@@ -45,6 +53,7 @@ namespace UCM.IAV.Navegacion
         {
             Load();
             minotaur = GameObject.FindGameObjectWithTag("Minotaur");
+            dataText = GameObject.FindGameObjectWithTag("Canvas").GetComponentsInChildren<Text>();
         }
 
         public virtual void Load() { }
@@ -186,6 +195,9 @@ namespace UCM.IAV.Navegacion
       
         public List<Vertex> GetPathAstar(GameObject srcO, GameObject dstO, Heuristic h = null)
         {
+            System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
+            watch.Start();
+
             //Comprobación de GOs
             if (!srcO|| !dstO)
                 return new List<Vertex>();
@@ -202,6 +214,15 @@ namespace UCM.IAV.Navegacion
             
             Vertex minoVertex = GetNearestVertex(minotaur.transform.position);
             Edge[] minoEdges = GetEdges(minoVertex);
+
+
+            allMinoVertex = new List<Vertex>();
+
+            allMinoVertex.Add(minoVertex);
+            foreach(Edge e in minoEdges)
+            {
+                allMinoVertex.Add(e.vertex);
+            }
 
             //Cola de prioridad de los nodos y sus costes
             Priority_Queue<Edge> pqEdge = new Priority_Queue<Edge>();
@@ -233,6 +254,7 @@ namespace UCM.IAV.Navegacion
             //Bucle ppal
             while (!pqEdge.Empty())
             {
+                nodesExplored++;
                 //Obtenemos el nodo más prioritario
                 node = pqEdge.Remove();
                 int nodeId = node.vertex.id;
@@ -241,6 +263,12 @@ namespace UCM.IAV.Navegacion
                 //Si es el que se busca, devolvemos el camino construido
                 if (ReferenceEquals(node.vertex, dst))
                 {
+                    watch.Stop();
+                    timeToExplore = watch.ElapsedMilliseconds;
+                    ShowInCanvas();
+                    //reseteo para la siguiente vez
+                    nodesExplored = 0;
+
                     return BuildPath(src.id, node.vertex.id, ref prevVertex);
                 }
 
@@ -277,6 +305,14 @@ namespace UCM.IAV.Navegacion
                     }
                 }
             }
+
+            //Si llega aquí es que no ha encontrado camino hasta la salida
+            watch.Stop();
+            timeToExplore = watch.ElapsedMilliseconds;
+            ShowInCanvas();
+            //reseteo para la siguiente vez
+            nodesExplored = 0;
+            
             return new List<Vertex>();
         }
 
@@ -312,6 +348,12 @@ namespace UCM.IAV.Navegacion
             Vector3 posA = a.transform.position;
             Vector3 posB = b.transform.position;
             return Mathf.Abs(posA.x - posB.x) + Mathf.Abs(posA.y - posB.y);
+        }
+
+        private void ShowInCanvas()
+        {
+            dataText[0].text = "Nodos Expl: " + nodesExplored;
+            dataText[1].text = "Tiempo: " + timeToExplore + " ms";
         }
     }
 }

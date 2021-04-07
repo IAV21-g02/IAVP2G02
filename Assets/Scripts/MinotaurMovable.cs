@@ -30,23 +30,23 @@ public class MinotaurMovable : MonoBehaviour
         if (!follow)
         {
 
-             RaycastHit hit;
-             if (Physics.Raycast(raycastStart.position, transform.forward,out hit, raycastDistance))
-             {
-                 if (hit.transform.gameObject.tag == "Wall")
-                 {
-                Debug.DrawLine(transform.position, hit.point, Color.green);
-                rb.velocity = Vector3.zero;
+            RaycastHit hit;
+            if (Physics.Raycast(raycastStart.position, transform.forward, out hit, raycastDistance))
+            {
+                if (hit.transform.gameObject.tag == "Wall")
+                {
+                    Debug.DrawLine(transform.position, hit.point, Color.green);
+                    rb.velocity = Vector3.zero;
 
-                if (transform.forward == Vector3.right) transform.forward = Vector3.back;
-                else if (transform.forward == Vector3.back) transform.forward = Vector3.left;
-                else if (transform.forward == Vector3.left) transform.forward = Vector3.forward;
-                else transform.forward = transform.right;
-                 }
-          
-             }
+                    if (transform.forward == Vector3.right) transform.forward = Vector3.back;
+                    else if (transform.forward == Vector3.back) transform.forward = Vector3.left;
+                    else if (transform.forward == Vector3.left) transform.forward = Vector3.forward;
+                    else transform.forward = transform.right;
+                }
 
-             
+            }
+
+
         }
 
         rb.AddForce(transform.forward * force, ForceMode.Force);
@@ -58,7 +58,7 @@ public class MinotaurMovable : MonoBehaviour
     {
         if (follow)
         {
-         transform.forward = Vector3.Normalize(Player.transform.position - transform.position);
+            transform.forward = Vector3.Normalize(Player.transform.position - transform.position);
 
         }
     }
@@ -66,7 +66,7 @@ public class MinotaurMovable : MonoBehaviour
     public void startFollow(bool start)
     {
         follow = start;
-        
+
     }
 
 

@@ -8,6 +8,7 @@ TagManager:
   - Vertex
   - Wall
   - Minotaur
+  - Canvas
   layers:
   - Default
   - TransparentFX

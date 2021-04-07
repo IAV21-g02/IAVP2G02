@@ -17,7 +17,6 @@ public class MinotaurVision : MonoBehaviour
         //si choca con el jugador
         if (other.gameObject.tag == "Player")
         {
-            Debug.Log("onCollision con el PLayer");
             mov.startFollow(true);
         }
     }
@@ -28,7 +27,6 @@ public class MinotaurVision : MonoBehaviour
         //si choca con el jugador
         if (other.gameObject.tag == "Player")
         {
-            Debug.Log("onCollisionExit del player");
             mov.startFollow(false);
         }
     }

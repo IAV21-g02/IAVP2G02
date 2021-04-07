@@ -60,14 +60,15 @@ namespace UCM.IAV.Navegacion
         // Update is called once per frame
         void Update()
         {
-            // Con la barra espaciadora se activa la búsqueda del camino mínimo
+            //Al pulsar la barra espaciadora calculamos una sola vez el camino
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                Debug.Log("Space Down");
                 switch (algorithm)
                 {
                     case TesterGraphAlgorithm.ASTAR:
                         path = graph.GetPathAstar(this.player, exit, graph.ManhattanDist); // Se pasa la heurística
+                        //Pintamos de otro color las casillas que se ven afectadas por el minotauro
+                        ShowPath(graph.GetMinotaurVertex(), Color.green);
                         break;
                     default:
                     case TesterGraphAlgorithm.BFS:
@@ -83,20 +84,27 @@ namespace UCM.IAV.Navegacion
                 if (smoothPath)
                     path = graph.Smooth(path); // Suavizar el camino, una vez calculado
 
+                //Pintamos el camino a seguir
                 ShowPath(path, Color.red);
+                //Hacemos que el player pase a moverse cinemáticamente en vez de por fuerzas
                 mov.SetPlayerAsKinematicObject(true);
+                //Le pasamos el path que deberá seguir
                 mov.AddExitPath(path);
 
             }
+            //Mientras se mantenga pulsada la tecla espacio el player continua moviendose
             else if (Input.GetKey(KeyCode.Space)){
-                Debug.Log("Space");
-                mov.MoveToExit(graph.GetNearestVertex(mov.gameObject.transform.position));
+                mov.MoveToExit();
             }
+            //Cuando se levante la tecla espacio
             else if (Input.GetKeyUp(KeyCode.Space))
             {
-                Debug.Log("Space Up");
+                //El player vuelve a controlarse mediante fisicas
                 mov.SetPlayerAsKinematicObject(false);
+                //Borramos los caminos pintados
                 ShowPath(path, Color.white);
+                ShowPath(graph.GetMinotaurVertex(), Color.white);
+                //Reseteamos la lista
                 path.Clear();
             }
         }
