@@ -37,8 +37,8 @@ El proyecto está implementado con **Unity** y la documentación del código la 
 
 ### 2.2 Escenario
 
-El escenario trata de simular un **Laberinto** de manera que hay obstáculos(muros del laberinto). Las entidades no pueden atravesar los obstáculos, de manera que solo puedan circular por las zonas libres de estos. El minotauro,controlado mediante IA, no detectan dichos obstáculos,por lo que puede chocarse con ellos.
-El hilo de Ariadna, por el contrario, genera un camino que sí tiene en cuenta los muros y los esquiva;
+El escenario trata de simular un **Laberinto** de manera que hay obstáculos(muros del laberinto). Las entidades no pueden atravesar los obstáculos, de manera que solo puedan circular por las zonas libres de estos. El minotauro,controlado mediante IA, detectan dichos obstáculos,por lo que al detectar que tiene un muro de frente, gira.
+El hilo de Ariadna,genera un camino que sí tiene en cuenta los muros y los esquiva;
 
 **El Laberinto** se genera automáticamente Siguiendo el diseño escrito en un documento .map.Que permite la facil manipulación de los obstaculos.
 
@@ -64,7 +64,7 @@ Encargado de pintar el Laberinto, en el que hicimos modificaciones para que tamb
 Encargado de la detección del jugador y de activar el modo de seguimiento.
 
 ### 3.6 Script MinotaurMovable
-En el que se describe la IA del minotauro, se encarga de hacer que el minotauro sigua un movimiento de merodeo aleatorio, cambiando de dirección cada vez que se choca con una pared. Además se encarga de que sigua al jugador cuando entra en su rango de visión;
+En el que se describe la IA del minotauro, se encarga de hacer que el minotauro sigua un movimiento de merodeo aleatorio, cambiando de dirección cada vez que detecta una pared mediante Raycast. Además se encarga de que sigua al jugador cuando entra en su rango de visión;
 
 ### 3.7 Script PriorityQueue
 Plantilla de una Cola de prioridad implementada en C# a la que le hicimos algunas modificaciones para adaptarla a las necesidades de nuestro código y que utilizamos para la facilitar la implementación del algoritmo A*
