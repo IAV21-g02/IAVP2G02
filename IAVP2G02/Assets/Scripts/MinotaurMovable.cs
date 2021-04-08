@@ -19,6 +19,8 @@ public class MinotaurMovable : MonoBehaviour
     private const int minotaurLayer = 9;
     private float timer = 1.0f;
     private Renderer rend;
+    public ParticleSystem ptc;
+    private AudioSource clip;
 
     void Start()
     {
@@ -26,6 +28,8 @@ public class MinotaurMovable : MonoBehaviour
         velocity = new Vector3(1, 0, 0);
         Player = GameObject.FindGameObjectWithTag("Player");
         rend = gameObject.GetComponent<Renderer>();
+        ptc.Stop();
+        clip = GetComponent<AudioSource>();
     }
 
 
@@ -113,9 +117,12 @@ public class MinotaurMovable : MonoBehaviour
         if (follow)
         {
             rend.material.color = Color.black;
+            ptc.Play();
+            clip.Play();
         }
         else { 
             rend.material.color = Color.yellow;
+            ptc.Stop();
         }
     }
 }
