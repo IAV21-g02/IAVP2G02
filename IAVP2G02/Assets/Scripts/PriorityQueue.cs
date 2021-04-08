@@ -205,8 +205,12 @@ namespace priority_queue
         /// </summary>
         public bool Contains(T e)
         {
-            EnsureSort();
-            return Array.BinarySearch<T>(list, 0, it, e) >= 0;
+            foreach (T elem in list) {
+                if (ReferenceEquals(elem, e))
+                    return true;
+            }
+
+            return false;
         }
 
         public void CopyTo(T[] array, int arrayIndex)

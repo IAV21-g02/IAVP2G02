@@ -191,7 +191,7 @@ namespace UCM.IAV.Navegacion
 
         }
 
-        public class Minor: IComparer<NodeRecord>
+        public class Minor : IComparer<NodeRecord>
         {
             public int Compare(NodeRecord a, NodeRecord b)
             {
@@ -199,14 +199,14 @@ namespace UCM.IAV.Navegacion
                 else return 0;
             }
         }
-      
+
         public List<Vertex> GetPathAstar(GameObject srcO, GameObject dstO, Heuristic h = null)
         {
             System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
             watch.Start();
 
             //Comprobación de GOs
-            if (!srcO|| !dstO)
+            if (!srcO || !dstO)
                 return new List<Vertex>();
 
             //Si no se le pasa ninguna heurística, entonces se coge una por defecto
@@ -217,24 +217,25 @@ namespace UCM.IAV.Navegacion
             Vertex src = GetNearestVertex(srcO.transform.position);
             Vertex dst = GetNearestVertex(dstO.transform.position);
 
-            //Vertices del minotauro
-            Vertex minoVertex = GetNearestVertex(minotaur.transform.position);
+            //Vertices del minotauro y sus vecinos
+            Vector3 posMino = minotaur.transform.position;
+            posMino.y = 0;
+            Vertex minoVertex = GetNearestVertex(posMino);
             Edge[] minoEdges = GetEdges(minoVertex);
-
-
             allMinoVertex = new List<Vertex>();
-
             allMinoVertex.Add(minoVertex);
-            foreach(Edge e in minoEdges)
+
+            foreach (Edge e in minoEdges)
             {
                 allMinoVertex.Add(e.vertex);
             }
 
             //Cola de prioridad de los nodos y sus costes
             Priority_Queue<Edge> pqEdge = new Priority_Queue<Edge>();
+
             Edge[] edges;
             Edge node, child;
-            
+
             //Array de distancias
             float[] distances = new float[vertices.Count];
             //Array del vértice anterior
@@ -261,6 +262,7 @@ namespace UCM.IAV.Navegacion
             while (!pqEdge.Empty())
             {
                 nodesExplored++;
+
                 //Obtenemos el nodo más prioritario
                 node = pqEdge.Remove();
                 int nodeId = node.vertex.id;
@@ -284,18 +286,31 @@ namespace UCM.IAV.Navegacion
                     int nID = neigh.vertex.id;
                     //Si es != -1 es que ha sido visitado, por tanto se le salta
                     //Si es la casilla del minotauro, tampoco se cuenta
-                    if (prevVertex[nID] == -1 || neigh.vertex != minoVertex)
+                    if (prevVertex[nID] == -1)
                     {
+                        if (node.vertex == minoVertex)
+                        {
+                            continue;
+                        }
                         //Se calcula el coste del nodo
                         float cost = distances[nodeId] + neigh.cost;
+
                         //Se comprueba si es una de las casillas vecinas al minotauro
                         //de manera que si es así, entonces aumenta 5 veces su coste
-                        foreach (Edge mino in minoEdges) {
-                            if (neigh == mino) cost *= 5;
+                        //foreach (Vertex mino in allMinoVertex)
+                        //{
+                        //    if (neigh.vertex == mino && mino != minoVertex)
+                        //            cost *= 5;
+                        //}
+                        foreach (Edge mino in minoEdges)
+                        {
+                            if (neigh.vertex == mino.vertex)
+                                cost *= 5;
                         }
 
                         //Se le suma el coste estimado al coste del nodo
                         cost += h(node.vertex, neigh.vertex);
+
 
                         //Si el coste es menor que el que ya estaba almacenado,
                         //entonces es mejor solución
@@ -305,7 +320,10 @@ namespace UCM.IAV.Navegacion
                             prevVertex[nID] = nodeId;
                             pqEdge.Remove(neigh);
                             child = new Edge(neigh.vertex, cost);
-                            pqEdge.Add(child);
+                            if (!pqEdge.Contains(child))
+                            {
+                                pqEdge.Add(child);
+                            }
                         }
                     }
                 }
@@ -317,7 +335,7 @@ namespace UCM.IAV.Navegacion
             ShowInCanvas();
             //reseteo para la siguiente vez
             nodesExplored = 0;
-            
+
             return new List<Vertex>();
         }
 

@@ -51,14 +51,22 @@ public class PlayerMovable : MonoBehaviour
     public void AddExitPath(List<Vertex> exit)
     {
         path = exit;
-        index = path.Count - 1;
-        dest = path[index].GetComponent<Transform>();
+        if (exit.Count > 0)
+        {
+            index = path.Count - 1;
+            dest = path[index].GetComponent<Transform>();
+        }
+        else
+        {
+            dest = null;
+            index = 0;
+        }
     }
 
     //Método que maneja el movimiento del player cuando este está bajo el control de la IA
     public void MoveToExit()
     {
-        if (!rb.isKinematic) return;
+        if (!rb.isKinematic || dest == null) return;
 
         //Hacemos copias de las posiciones para luego no tener en cuenta su distancia en y para
         //el calculo de pasar de baldosa
@@ -70,10 +78,10 @@ public class PlayerMovable : MonoBehaviour
         float distance = (destP - playerP).magnitude;
         //Si el player está lo suficientemente cerca de la siguiente baldosa a la que debería llegar 
         //siguiendo el path pasamos a la siguiente
-        if ( distance< 0.5f && index >= 0)
+        if (distance < 0.5f && index >= 0)
         {
             Vertex next = path[index];
-            
+
             //Cambiamos color de la baldosa por la que hemos pasado(recogemos hilo)
             Renderer r = next.GetComponent<Renderer>();
             r.material.color = Color.white;
@@ -86,13 +94,13 @@ public class PlayerMovable : MonoBehaviour
                 dest = next.GetComponent<Transform>();
             }
             else rb.isKinematic = false;
-            
+
         }
 
         //Calculamos hacia que dirección nos tendríamos que mover 
         Vector3 dir = (dest.position - transform.position);
         //No tenemos en cuenta la diferencia en Y que pueda haber entre el suelo y el player
-        dir.y = 0; 
+        dir.y = 0;
         dir.Normalize();
         dir *= maxIAVelocity;
 

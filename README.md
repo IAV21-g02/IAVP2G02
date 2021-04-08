@@ -49,8 +49,9 @@ Para implementar el comportamiento descrito en el enunciado de la práctica hemo
 ### 3.1 Script Graph
 Clase base que venía incluida en la plantilla del proyecto. Se encarga de toda la representación interna del grafo, en la cual nosotros hemos incluido todo lo necesario para la implementacion del algoritmo A*. También es la clase que calcula el número de nodos explorados y el tiempo invertido en dicha exploración.
 
-### 3.2 Script TestGraph
-Clase base que venía incluida en la plantilla del proyecto. Es la encargada de llamar al algoritmo A*, de pintar el camino, de borrarlo y de avisar al jugador de cuando se ha activado el hilo para que así avance de forma cinemática siguiendo dicho camino.
+### 3.2 Script Ariadna
+Clase base que venía incluida en la plantilla del proyecto a la cual se le han realizado algunos cambios. Es la encargada de llamar al algoritmo A*, de pintar el camino, de borrarlo y de avisar al jugador de cuando se ha activado el hilo para que así avance de forma cinemática siguiendo dicho camino.
+
 
 ### 3.3 Script GraphGrid
 Clase base que venía incluida en la plantilla del proyecto. Se encarga de pintar el laberinto. Hicimos modificaciones para que tambien se crearan mediante fichero el player y el minotauro en la posición del mapa que especifiquemos en el documento .map. 

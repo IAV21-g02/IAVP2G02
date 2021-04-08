@@ -1,13 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UCM.IAV.Navegacion;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 
 public class MinotaurMovable : MonoBehaviour
 {
-    public PathAlgorithmType algorithm;
     public Transform raycastStart;
     public float force = 10;
     public float raycastDistance = 2.0f;
@@ -17,35 +15,25 @@ public class MinotaurMovable : MonoBehaviour
     private Vector3 velocity;
     private Vector3 bound;
     private GameObject Player;
+    private bool follow = false;
     private const int minotaurLayer = 9;
-    private Graph graph;
-    private List<Vertex> path; // La variable con el camino calculado
-    private int index = 0;
-    private Transform dest;
     private float timer = 1.0f;
-    private CapsuleCollider coll;
-    bool follow = false;
+    private Renderer rend;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         velocity = new Vector3(1, 0, 0);
         Player = GameObject.FindGameObjectWithTag("Player");
-        graph = GameObject.Find("GraphGrid").GetComponent<GraphGrid>();
-        coll = gameObject.GetComponent<CapsuleCollider>();
-        //coll.radius = 0.1f;
-        //follow = true;
-        //
-        //AddPath();
+        rend = gameObject.GetComponent<Renderer>();
     }
+
 
     private void FixedUpdate()
     {
         if (!follow)
         {
-
             RaycastHit hit;
-            int rnd = Random.Range(0, 2);
             if (Physics.Raycast(raycastStart.position, transform.forward, out hit, raycastDistance))
             {
                 if (hit.transform.gameObject.tag == "Wall")
@@ -55,6 +43,7 @@ public class MinotaurMovable : MonoBehaviour
 
                     RandomTurn();
                 }
+
             }
 
             //Evita que el minotauro se quede atascado en un punto
@@ -112,74 +101,9 @@ public class MinotaurMovable : MonoBehaviour
 
     private void Update()
     {
-        if (follow && index >= 0)
+        if (follow)
         {
-            //Se coge la posicion destino
-            dest = path[index].GetComponent<Transform>();
-
-            //No se tiene en cuenta la y
-            Vector3 pos = transform.position;
-            pos.y = 0;
-            Vector3 destP = dest.position;
-            destP.y = 0;
-
-            float distance = (destP - pos).magnitude;
-            //Si el minotauro está lo suficientemente cerca, entonces pasa al siguiente nodo
-            if (distance < 0.5f && index > 0)
-            {
-                Vertex next = path[index];
-
-                //Pasamos al siguiente objetivo si todavía nos faltan baldosas por recorrer
-                if (index > 0)
-                {
-                    index--;
-                    next = path[index];
-                    dest = next.GetComponent<Transform>();
-                }
-                else rb.isKinematic = false;
-            }
-
-            //Movemos
-            transform.forward = Vector3.Normalize(destP - pos);
-        }
-    }
-
-    //Añade un nuevo camino para ir hacia Teseo
-    public void AddPath()
-    {
-        switch (algorithm)
-        {
-            case PathAlgorithmType.ASTAR:
-                path = graph.GetPathAstar(gameObject, Player, graph.ManhattanDist);
-                break;
-            default:
-            case PathAlgorithmType.BFS:
-                path = graph.GetPathBFS(gameObject, Player);
-                break;
-            case PathAlgorithmType.DFS:
-                path = graph.GetPathDFS(gameObject, Player);
-                break;
-            case PathAlgorithmType.DIJKSTRA:
-                path = graph.GetPathDijkstra(gameObject, Player);
-                break;
-        }
-
-        //Pintamos el camino a seguir
-        ShowPath(path, Color.black);
-        index = path.Count - 1;
-    }
-
-    // Muestra el camino calculado
-    public void ShowPath(List<Vertex> path, Color color)
-    {
-        int i;
-        for (i = 0; i < path.Count; i++)
-        {
-            Vertex v = path[i];
-            Renderer r = v.GetComponent<Renderer>();
-            if (ReferenceEquals(r, null))
-                continue;
-            r.material.color = color;
+            transform.forward = Vector3.Normalize(Player.transform.position - transform.position);
         }
     }
 
@@ -188,13 +112,10 @@ public class MinotaurMovable : MonoBehaviour
         follow = start;
         if (follow)
         {
-            //coll.isTrigger = true;
-            AddPath();
+            rend.material.color = Color.black;
         }
-        else
-        {
-            //coll.isTrigger = false;
-            path = new List<Vertex>();
+        else { 
+            rend.material.color = Color.yellow;
         }
     }
 }

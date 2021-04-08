@@ -4,7 +4,7 @@
     using UnityEngine;
     using System.Collections.Generic;
 
-    //
+    //Clase encargada de gestionar el hilo de Ariadna
     public class Ariadna : MonoBehaviour
     {
         public Graph graph;
