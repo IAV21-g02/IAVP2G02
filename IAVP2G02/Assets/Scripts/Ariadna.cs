@@ -1,52 +1,26 @@
-﻿/*    
-    Obra original:
-        Copyright (c) 2018 Packt
-        Unity 2018 Artificial Intelligence Cookbook - Second Edition, by Jorge Palacios
-        https://github.com/PacktPublishing/Unity-2018-Artificial-Intelligence-Cookbook-Second-Edition
-        MIT License
-
-    Modificaciones:
-        Copyright (C) 2020-2021 Federico Peinado
-        http://www.federicopeinado.com
-
-        Este fichero forma parte del material de la asignatura Inteligencia Artificial para Videojuegos.
-        Esta asignatura se imparte en la Facultad de Informática de la Universidad Complutense de Madrid (España).
-        Contacto: email@federicopeinado.com
-*/
-namespace UCM.IAV.Navegacion
+﻿namespace UCM.IAV.Navegacion
 {
 
     using UnityEngine;
     using System.Collections.Generic;
 
-    // Posibles algoritmos para buscar caminos en grafos
-    public enum TesterGraphAlgorithm
-    {
-        BFS, DFS, DIJKSTRA, ASTAR
-    }
-
     //
-    public class TesterGraph : MonoBehaviour
+    public class Ariadna : MonoBehaviour
     {
         public Graph graph;
-        public TesterGraphAlgorithm algorithm;
+        public PathAlgorithmType algorithm;
         public bool smoothPath;
-        public string vertexTag = "Vertex"; // Etiqueta de un nodo normal
-        public string obstacleTag = "Wall"; // Etiqueta de un obstáculo, tipo pared...
         public Color pathColor;
-        [Range(0.1f, 1f)]
         public float pathNodeRadius = .3f;
 
-        Camera mainCamera;
         GameObject player;
-        PlayerMovable mov;
         GameObject exit;
+        PlayerMovable mov;
         List<Vertex> path; // La variable con el camino calculado
 
         // Despertar inicializando esto
         void Awake()
         {
-            mainCamera = Camera.main;
             path = new List<Vertex>();
         }
 
@@ -57,7 +31,6 @@ namespace UCM.IAV.Navegacion
             exit = GameObject.Find("Salida");
         }
 
-        // Update is called once per frame
         void Update()
         {
             //Al pulsar la barra espaciadora calculamos una sola vez el camino
@@ -65,19 +38,20 @@ namespace UCM.IAV.Navegacion
             {
                 switch (algorithm)
                 {
-                    case TesterGraphAlgorithm.ASTAR:
-                        path = graph.GetPathAstar(this.player, exit, graph.ManhattanDist); // Se pasa la heurística
-                        //Pintamos de otro color las casillas que se ven afectadas por el minotauro
+                    case PathAlgorithmType.ASTAR:
+                        path = graph.GetPathAstar(this.player, exit, graph.ManhattanDist);
+
+                        //Baldosas del minotauro
                         ShowPath(graph.GetMinotaurVertex(), Color.green);
                         break;
                     default:
-                    case TesterGraphAlgorithm.BFS:
+                    case PathAlgorithmType.BFS:
                         path = graph.GetPathBFS(this.player, exit);
                         break;
-                    case TesterGraphAlgorithm.DFS:
+                    case PathAlgorithmType.DFS:
                         path = graph.GetPathDFS(this.player, exit);
                         break;
-                    case TesterGraphAlgorithm.DIJKSTRA:
+                    case PathAlgorithmType.DIJKSTRA:
                         path = graph.GetPathDijkstra(this.player, exit);
                         break;
                 }
@@ -87,10 +61,9 @@ namespace UCM.IAV.Navegacion
                 //Pintamos el camino a seguir
                 ShowPath(path, Color.red);
                 //Hacemos que el player pase a moverse cinemáticamente en vez de por fuerzas
-                mov.SetPlayerAsKinematicObject(true);
+                mov.SetKinematic(true);
                 //Le pasamos el path que deberá seguir
                 mov.AddExitPath(path);
-
             }
             //Mientras se mantenga pulsada la tecla espacio el player continua moviendose
             else if (Input.GetKey(KeyCode.Space)){
@@ -100,7 +73,7 @@ namespace UCM.IAV.Navegacion
             else if (Input.GetKeyUp(KeyCode.Space))
             {
                 //El player vuelve a controlarse mediante fisicas
-                mov.SetPlayerAsKinematicObject(false);
+                mov.SetKinematic(false);
                 //Borramos los caminos pintados
                 ShowPath(path, Color.white);
                 ShowPath(graph.GetMinotaurVertex(), Color.white);
@@ -159,22 +132,6 @@ namespace UCM.IAV.Navegacion
                     continue;
                 r.material.color = color;
             }
-        }
-
-        // Cuantificación, cómo traduce de posiciones del espacio (la pantalla) a nodos
-        private GameObject GetNodeFromScreen(Vector3 screenPosition)
-        {
-            GameObject node = null;
-            Ray ray = mainCamera.ScreenPointToRay(screenPosition);
-            RaycastHit[] hits = Physics.RaycastAll(ray);
-            foreach (RaycastHit h in hits)
-            {
-                if (!h.collider.CompareTag(vertexTag) && !h.collider.CompareTag(obstacleTag))
-                    continue;
-                node = h.collider.gameObject;
-                break;
-            }
-            return node;
         }
     }
 }

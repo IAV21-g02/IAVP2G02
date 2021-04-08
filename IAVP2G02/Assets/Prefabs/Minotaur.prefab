@@ -95,10 +95,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.8000001
-  m_Height: 2
+  m_Radius: 0.8
+  m_Height: 1
   m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+  m_Center: {x: 0, y: 0.2, z: 0}
 --- !u!54 &1409989345938169831
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -127,9 +127,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4d768a3cf176544985162936bdbac8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  force: 20
-  raycastDistance: 3
+  algorithm: 3
   raycastStart: {fileID: 7883011157912149599}
+  force: 10
+  raycastDistance: 0.8
+  maxKVel: 7
 --- !u!1 &3594413145345734307
 GameObject:
   m_ObjectHideFlags: 0

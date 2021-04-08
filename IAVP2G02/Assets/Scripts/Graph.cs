@@ -22,6 +22,13 @@ namespace UCM.IAV.Navegacion
     using priority_queue;
     using UnityEngine.UI;
 
+    // Posibles algoritmos para buscar caminos en grafos
+    public enum PathAlgorithmType
+    {
+        BFS, DFS, DIJKSTRA, ASTAR
+
+    }
+
     /// <summary>
     /// Abstract class for graphs
     /// </summary>
@@ -211,7 +218,6 @@ namespace UCM.IAV.Navegacion
             Vertex dst = GetNearestVertex(dstO.transform.position);
 
             //Vertices del minotauro
-            
             Vertex minoVertex = GetNearestVertex(minotaur.transform.position);
             Edge[] minoEdges = GetEdges(minoVertex);
 
@@ -258,7 +264,6 @@ namespace UCM.IAV.Navegacion
                 //Obtenemos el nodo más prioritario
                 node = pqEdge.Remove();
                 int nodeId = node.vertex.id;
-                
 
                 //Si es el que se busca, devolvemos el camino construido
                 if (ReferenceEquals(node.vertex, dst))

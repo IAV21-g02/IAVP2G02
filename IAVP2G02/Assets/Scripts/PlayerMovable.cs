@@ -42,7 +42,7 @@ public class PlayerMovable : MonoBehaviour
     }
 
     //Método para cambiar el control del player (true -> mediante IA, false-> mediante flechas o WADS) 
-    public void SetPlayerAsKinematicObject(bool kinematic)
+    public void SetKinematic(bool kinematic)
     {
         rb.isKinematic = kinematic;
     }
