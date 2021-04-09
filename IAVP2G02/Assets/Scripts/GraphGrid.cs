@@ -20,6 +20,7 @@ namespace UCM.IAV.Navegacion
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using UnityEngine.UI;
 
     public class GraphGrid : Graph
     {
@@ -64,6 +65,8 @@ namespace UCM.IAV.Navegacion
         private void LoadMap(string filename)
         {
             string path = Application.dataPath + "/" + mapsDir + "/" + filename;
+
+            //string path = "Assets/Maps/" + filename;
             try
             {
                 StreamReader strmRdr = new StreamReader(path);
