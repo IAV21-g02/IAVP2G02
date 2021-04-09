@@ -36,6 +36,7 @@ namespace UCM.IAV.Navegacion
         public float defaultCost = 1f;
         [Range(0, Mathf.Infinity)]
         public float maximumCost = Mathf.Infinity;
+        public TextAsset file;
 
         int numCols;
         int numRows;
@@ -66,92 +67,85 @@ namespace UCM.IAV.Navegacion
         {
             string path = Application.dataPath + "/" + mapsDir + "/" + filename;
 
+            //Se guarda el archivo de texto en un array
+            string[] mapa = file.text.Split('\n');
+
             //string path = "Assets/Maps/" + filename;
             try
             {
-                StreamReader strmRdr = new StreamReader(path);
-                using (strmRdr)
+                int j = 0;
+                int i = 0;
+                int id = 0;
+
+                Vector3 position = Vector3.zero;
+                Vector3 scale = Vector3.zero;
+                numRows = int.Parse(mapa[1]);
+                numCols = int.Parse(mapa[2]);
+
+                vertices = new List<Vertex>(numRows * numCols);
+                neighbors = new List<List<Vertex>>(numRows * numCols);
+                costs = new List<List<float>>(numRows * numCols);
+                vertexObjs = new GameObject[numRows * numCols];
+                mapVertices = new TypeOfBox[numRows, numCols];
+
+                for (i = 4; i < numRows + 4; i++)
                 {
-                    int j = 0;
-                    int i = 0;
-                    int id = 0;
-                    string line;
-
-                    Vector3 position = Vector3.zero;
-                    Vector3 scale = Vector3.zero;
-                    line = strmRdr.ReadLine();// non-important line
-                    line = strmRdr.ReadLine();// height
-                    numRows = int.Parse(line.Split(' ')[1]);
-                    line = strmRdr.ReadLine();// width
-                    numCols = int.Parse(line.Split(' ')[1]);
-                    line = strmRdr.ReadLine();// "map" line in file
-
-                    vertices = new List<Vertex>(numRows * numCols);
-                    neighbors = new List<List<Vertex>>(numRows * numCols);
-                    costs = new List<List<float>>(numRows * numCols);
-                    vertexObjs = new GameObject[numRows * numCols];
-                    mapVertices = new TypeOfBox[numRows, numCols];
-
-                    for (i = 0; i < numRows; i++)
+                    for (j = 0; j < numCols; j++)
                     {
-                        line = strmRdr.ReadLine();
-                        for (j = 0; j < numCols; j++)
+                        TypeOfBox casilla = TypeOfBox.Floor;
+
+                        if (mapa[i][j] == '.')
+                            casilla = TypeOfBox.Floor;
+                        else if (mapa[i][j] == 'T')
+                            casilla = TypeOfBox.Wall;
+                        else if (mapa[i][j] == 'E')
+                            casilla = TypeOfBox.Enter;
+                        else if (mapa[i][j] == 'M')
+                            casilla = TypeOfBox.Minotaur;
+
+
+                        mapVertices[i - 4, j] = casilla;
+                        position.x = j * cellSize;
+                        position.z = i - 4 * cellSize;
+                        id = GridToId(j, i - 4);
+
+                        if (casilla != TypeOfBox.Wall)
                         {
-                            TypeOfBox casilla = TypeOfBox.Floor;
-
-                            if (line[j] == '.')
-                                casilla = TypeOfBox.Floor;
-                            else if (line[j] == 'T')
-                                casilla = TypeOfBox.Wall;
-                            else if (line[j] == 'E')
-                                casilla = TypeOfBox.Enter;
-                            else if (line[j] == 'M')
-                                casilla = TypeOfBox.Minotaur;
-
-
-                            mapVertices[i, j] = casilla;
-                            position.x = j * cellSize;
-                            position.z = i * cellSize;
-                            id = GridToId(j, i);
-
-                            if (casilla != TypeOfBox.Wall)
+                            vertexObjs[id] = Instantiate(vertexPrefab, position, Quaternion.identity) as GameObject;
+                            Vector3 aux = position;
+                            aux.y += 1;
+                            if (casilla == TypeOfBox.Enter)
                             {
-                                vertexObjs[id] = Instantiate(vertexPrefab, position, Quaternion.identity) as GameObject;
-                                Vector3 aux = position;
-                                aux.y += 1;
-                                if (casilla == TypeOfBox.Enter)
-                                {
-                                    vertexObjs[id].name = "Salida";
-                                    Instantiate(playerPrefab, aux, Quaternion.identity);
-                                }
-                                else if (casilla == TypeOfBox.Minotaur)
-                                    Instantiate(minotaurPrefab, aux, Quaternion.identity);
+                                vertexObjs[id].name = "Salida";
+                                Instantiate(playerPrefab, aux, Quaternion.identity);
                             }
-                            else
-                            {
-                                vertexObjs[id] = Instantiate(obstaclePrefab, position, Quaternion.identity) as GameObject;
-                            }
-
-                            vertexObjs[id].name = vertexObjs[id].name.Replace("(Clone)", id.ToString());
-                            Vertex v = vertexObjs[id].AddComponent<Vertex>();
-                            v.id = id;
-                            vertices.Add(v);
-                            neighbors.Add(new List<Vertex>());
-                            costs.Add(new List<float>());
-                            float y = vertexObjs[id].transform.localScale.y;
-                            scale = new Vector3(cellSize, y, cellSize);
-                            vertexObjs[id].transform.localScale = scale;
-                            vertexObjs[id].transform.parent = gameObject.transform;
+                            else if (casilla == TypeOfBox.Minotaur)
+                                Instantiate(minotaurPrefab, aux, Quaternion.identity);
                         }
+                        else
+                        {
+                            vertexObjs[id] = Instantiate(obstaclePrefab, position, Quaternion.identity) as GameObject;
+                        }
+
+                        vertexObjs[id].name = vertexObjs[id].name.Replace("(Clone)", id.ToString());
+                        Vertex v = vertexObjs[id].AddComponent<Vertex>();
+                        v.id = id;
+                        vertices.Add(v);
+                        neighbors.Add(new List<Vertex>());
+                        costs.Add(new List<float>());
+                        float y = vertexObjs[id].transform.localScale.y;
+                        scale = new Vector3(cellSize, y, cellSize);
+                        vertexObjs[id].transform.localScale = scale;
+                        vertexObjs[id].transform.parent = gameObject.transform;
                     }
+                }
 
-                    // now onto the neighbours
-                    for (i = 0; i < numRows; i++)
+                // now onto the neighbours
+                for (i = 0; i < numRows; i++)
+                {
+                    for (j = 0; j < numCols; j++)
                     {
-                        for (j = 0; j < numCols; j++)
-                        {
-                            SetNeighbours(j, i);
-                        }
+                        SetNeighbours(j, i);
                     }
                 }
             }
