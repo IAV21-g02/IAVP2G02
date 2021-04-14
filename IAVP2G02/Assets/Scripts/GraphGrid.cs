@@ -78,6 +78,8 @@ namespace UCM.IAV.Navegacion
                 int id = 0;
 
                 Vector3 position = Vector3.zero;
+                position.y = -30.0f;
+
                 Vector3 scale = Vector3.zero;
                 numRows = int.Parse(mapa[1]);
                 numCols = int.Parse(mapa[2]);
@@ -106,6 +108,7 @@ namespace UCM.IAV.Navegacion
 
                         mapVertices[i - 4, j] = casilla;
                         position.x = j * cellSize;
+                        //position.x += 10;
                         position.z = i - 4 * cellSize;
                         id = GridToId(j, i - 4);
 
