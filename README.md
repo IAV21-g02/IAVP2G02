@@ -77,7 +77,7 @@ Para comprobar el funcionamiento de A*, hemos realizado diversas pruebas en ento
 El objetivo de esta prueba es evaluar si, una vez encontrándonos en línea recta con el minotauro activásemos el hilo de Ariadna en un entorno carente de obstáculos esquivaríamos los bloques que cuentan con un coste mayor puesto que son los adyacentes al minotauro (y que en el vídeo aparecen representados de color verde). Es una de las primeras comprobaciones que hicimos para evaluar que los costes de las baldosas funcionaban correctamente. En el siguiente vídeo consta un fragmento de la prueba:
 
 <figure class="video_container">
-  <iframe src="https://user-images.githubusercontent.com/48771457/114745439-f0545280-9d4e-11eb-8cf3-f94170465a83.mp4" frameborder="0" allowfullscreen="true"> </iframe>
+  <iframe src="https://youtu.be/QxFtuxsBPC8" frameborder="0" allowfullscreen="true"> </iframe>
 </figure>
 
 
