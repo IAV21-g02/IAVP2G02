@@ -1,3 +1,4 @@
+![Captura de pantalla 2021-04-14 183856](https://user-images.githubusercontent.com/48771457/114747294-f9deba00-9d50-11eb-8b26-2bfd2f9f0632.png)
 # Descripción
 Esta es la segunda práctica de la asignatura **Inteligencia Artificial para Videojuegos** de la **Universidad Complutense de Madrid**. 
 
@@ -74,12 +75,16 @@ Para comprobar el funcionamiento de A*, hemos realizado diversas pruebas en ento
 
 ### 4.1 Prueba en Entorno Vacío
 
-El objetivo de esta prueba es evaluar si, una vez encontrándonos en línea recta con el minotauro activásemos el hilo de Ariadna en un entorno carente de obstáculos esquivaríamos los bloques que cuentan con un coste mayor puesto que son los adyacentes al minotauro (y que en el vídeo aparecen representados de color verde). Es una de las primeras comprobaciones que hicimos para evaluar que los costes de las baldosas funcionaban correctamente. En el siguiente vídeo consta un fragmento de la prueba:
+El objetivo de esta prueba es evaluar si, una vez encontrándonos en línea recta con el minotauro activásemos el hilo de Ariadna en un entorno carente de obstáculos esquivaríamos los bloques que cuentan con un coste mayor puesto que son los adyacentes al minotauro (y que en el vídeo aparecen representados de color verde). Es una de las primeras comprobaciones que hicimos para evaluar que los costes de las baldosas funcionaban correctamente. En la siguiente imagen consta un fragmento de la prueba:
 
-<figure class="video_container">
-  <iframe src="https://youtu.be/QxFtuxsBPC8" frameborder="0" allowfullscreen="true"> </iframe>
-</figure>
+![Prueba_Hilo_Linea_Recta](https://user-images.githubusercontent.com/48771457/114747354-095e0300-9d51-11eb-9c9f-7407c3ac63ee.png)
+[![alt text](http://img.youtube.com/vi/QxFtuxsBPC8/0.jpg)](https://www.youtube.com/watch?v=QxFtuxsBPC8&ab_channel=IA_UCM_Tester "Prueba: Hilo de Ariadna sin obstáculos")
 
+### 4.1 Prueba en Pasillo abierto
+
+Similar en esencia a la prueba del apartado anterior, puesto que se distingue en que ahora el jugador se encuentra en un pasillo recto junto con el minotauro. Debido a que el coste de pasar por al lado del minotauro es elevado (o imposible si el pasillo es de una casilla de ancho, puesto que la casilla del minotauro no se puede atravesar), lo más lógico es que Teseo de media vuelta y llegue a la casilla de salida por el exterior de dicho pasillo puesto que este está abierto por dos extremos. En la siguiente vídeo consta un fragmento de la prueba:
+
+[![alt text](http://img.youtube.com/vi/XORXvt9_bjg/0.jpg)](https://youtu.be/XORXvt9_bjg "Prueba: Pasillo abierto")
 
 ## 5 Referencias
 - Pseudocódigo del libro: [**AI for Games, Third Edition**](https://ebookcentral.proquest.com/lib/universidadcomplutense-ebooks/detail.action?docID=5735527) de **Millington**
