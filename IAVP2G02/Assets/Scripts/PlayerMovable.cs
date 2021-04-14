@@ -11,6 +11,7 @@ public class PlayerMovable : MonoBehaviour
     private Vector3 velocity;
     List<Vertex> path; // La variable con el camino calculado
     int index = 0;
+    private Animator animCtl;
 
     //Variable que sirve para almacenar el transform de la casilla a la que nos tenemos que
     //mover cuando la IA maneja nuestro movimiento
@@ -27,6 +28,7 @@ public class PlayerMovable : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         path = new List<Vertex>();
+        animCtl = GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
@@ -38,6 +40,14 @@ public class PlayerMovable : MonoBehaviour
             velocity.x = Input.GetAxis("Horizontal");
             velocity.z = Input.GetAxis("Vertical");
             velocity *= maxVelocity;
+
+            transform.forward = rb.velocity;
+
+            if (rb.velocity.magnitude > 0.4 )
+            {
+                animCtl.SetBool("walk", true);
+            }
+            else if(rb.velocity.magnitude <= 0.4) animCtl.SetBool("walk", false);
         }
     }
 
@@ -50,6 +60,7 @@ public class PlayerMovable : MonoBehaviour
     //Método que asigna una lista de vertices con el camino que deberá seguir el player
     public void AddExitPath(List<Vertex> exit)
     {
+        transform.forward = Vector3.forward;
         path = exit;
         if (exit.Count > 0)
         {
@@ -67,7 +78,6 @@ public class PlayerMovable : MonoBehaviour
     public void MoveToExit()
     {
         if (!rb.isKinematic || dest == null) return;
-
         //Hacemos copias de las posiciones para luego no tener en cuenta su distancia en y para
         //el calculo de pasar de baldosa
         Vector3 playerP = transform.position;

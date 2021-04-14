@@ -21,6 +21,7 @@ public class MinotaurMovable : MonoBehaviour
     private Renderer rend;
     public ParticleSystem ptc;
     private AudioSource clip;
+    private Animator animCtl;
 
     void Start()
     {
@@ -30,6 +31,7 @@ public class MinotaurMovable : MonoBehaviour
         rend = gameObject.GetComponent<Renderer>();
         ptc.Stop();
         clip = GetComponent<AudioSource>();
+        animCtl = GetComponentInChildren<Animator>();
     }
 
 
@@ -119,6 +121,7 @@ public class MinotaurMovable : MonoBehaviour
             rend.material.color = Color.black;
             ptc.Play();
             clip.Play();
+            animCtl.Play("Shout");
         }
         else { 
             rend.material.color = Color.yellow;
