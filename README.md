@@ -1,4 +1,4 @@
-![Captura de pantalla 2021-04-14 183856](https://user-images.githubusercontent.com/48771457/114747294-f9deba00-9d50-11eb-8b26-2bfd2f9f0632.png)
+![Captura de pantalla 2021-04-14 183856](https://i.imgur.com/o0GPxX8.jpg)
 # Descripción
 Esta es la segunda práctica de la asignatura **Inteligencia Artificial para Videojuegos** de la **Universidad Complutense de Madrid**. 
 
