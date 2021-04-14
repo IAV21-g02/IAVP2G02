@@ -68,8 +68,20 @@ En el que se describe la IA del movimento del minotauro. Implementa un comportam
 ### 3.7 Script PriorityQueue
 Plantilla de una cola de prioridad implementada en C# a la que le hicimos algunas modificaciones para adaptarla a las necesidades de nuestro código y que utilizamos para la facilitar la implementación del algoritmo A*
 
+## 4 Pruebas realizadas
 
-## 4 Referencias
+Para comprobar el funcionamiento de A*, hemos realizado diversas pruebas en entornos controlados por nosotros mismos para evaluar la corrección de el algoritmo. Para ello, hemos desactivado el comportamiento de movimiento y la visión del Minotauro (para que cuando nos acercásemos mucho a él no nos detectase).
+
+### 4.1 Prueba en Entorno Vacío
+
+El objetivo de esta prueba es evaluar si, una vez encontrándonos en línea recta con el minotauro activásemos el hilo de Ariadna en un entorno carente de obstáculos esquivaríamos los bloques que cuentan con un coste mayor puesto que son los adyacentes al minotauro (y que en el vídeo aparecen representados de color verde). Es una de las primeras comprobaciones que hicimos para evaluar que los costes de las baldosas funcionaban correctamente. En el siguiente vídeo consta un fragmento de la prueba:
+
+<figure class="video_container">
+  <iframe src="https://user-images.githubusercontent.com/48771457/114745439-f0545280-9d4e-11eb-8cf3-f94170465a83.mp4" frameborder="0" allowfullscreen="true"> </iframe>
+</figure>
+
+
+## 5 Referencias
 - Pseudocódigo del libro: [**AI for Games, Third Edition**](https://ebookcentral.proquest.com/lib/universidadcomplutense-ebooks/detail.action?docID=5735527) de **Millington**
 
 - Código de [**Federico Peinado**](https://github.com/federicopeinado) habilitado para la asignatura.
