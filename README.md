@@ -55,16 +55,16 @@ Clase base que venía incluida en la plantilla del proyecto a la cual se le han 
 
 
 ### 3.3 Script GraphGrid
-Clase base que venía incluida en la plantilla del proyecto. Se encarga de pintar el laberinto. Hicimos modificaciones para que tambien se crearan mediante fichero el player y el minotauro en la posición del mapa que especifiquemos en el documento .map. 
+Clase base que venía incluida en la plantilla del proyecto. Se encarga de pintar el laberinto. Hicimos modificaciones para que tambien se crearan mediante fichero el player y el minotauro en la posición del mapa que especifiquemos en el documento .txt. Otra de las modificaciones que implementamos fue una nueva lectura de ficheros de mapas puesto que al hacer la build nos daban problemas en la localización de los assets de los mapas. Para ello usamos un objeto de la clase TextAsset configurable a través del editor de Unity que pasando un txt normal con el mapa a pintar genera el mapa.
 
 ### 3.4 PlayerMovable
 Se encarga de manejar el movimiento del jugador. Procesa el input del usuario y, si el hilo de Ariadna no está activo, añadirle las fuerzas correspondientes para moverlo. También define métodos para activar el movimiento controlado por la máquina, recibir el camino más corto generado por el algoritmo A* y ir avanzando siguiendo dicho camino que recibe.
 
 ### 3.5 Script MinotaurVisión
-Encargado de la detección del jugador y de activar el modo de seguimiento.
+Encargado de la detección del jugador y de activar el modo de seguimiento. Consiste en dos métodos, un OnCollisionEnter y un OnCollisionExit que se comunican con el comportamiento del movimiento del minotauro (Script MinotaurMovable) para activar el modo de seguimiento en dicho script cuando el objeto que ha entrado dentro del rango de visión del minotauro ha sido Teseo.
 
 ### 3.6 Script MinotaurMovable
-En el que se describe la IA del movimento del minotauro. Implementa un comportamiento de merodeo aleatorio, el cual hace que el minotauro cambie de dirección cada vez que detecta una pared mediante Raycast. Además se encarga de que siga al jugador cuando este entra en su rango de visión.
+En el que se describe la IA del movimento del minotauro. Implementa un comportamiento de merodeo aleatorio, el cual hace que el minotauro cambie de dirección cada vez que detecta una pared mediante Raycast. Dicha implementación del movimiento consiste en cambiar el transform.forward del minotauro de forma aleatoria a una de las cuatro posibles direcciones básicas: back, left, forward y right. Además se encarga de que siga al jugador cuando este entra en su rango de visión.
 
 ### 3.7 Script PriorityQueue
 Plantilla de una cola de prioridad implementada en C# a la que le hicimos algunas modificaciones para adaptarla a las necesidades de nuestro código y que utilizamos para la facilitar la implementación del algoritmo A*
@@ -75,18 +75,19 @@ Para comprobar el funcionamiento de A*, hemos realizado diversas pruebas en ento
 
 ### 4.1 Prueba en Entorno Vacío
 
-El objetivo de esta prueba es evaluar si, una vez encontrándonos en línea recta con el minotauro activásemos el hilo de Ariadna en un entorno carente de obstáculos esquivaríamos los bloques que cuentan con un coste mayor puesto que son los adyacentes al minotauro (y que en el vídeo aparecen representados de color verde). Es una de las primeras comprobaciones que hicimos para evaluar que los costes de las baldosas funcionaban correctamente. En la siguiente imagen consta un fragmento de la prueba:
+El objetivo de esta prueba es evaluar si, una vez encontrándonos en línea recta con el minotauro activásemos el hilo de Ariadna en un entorno carente de obstáculos esquivaríamos los bloques que cuentan con un coste mayor puesto que son los adyacentes al minotauro (y que en el vídeo aparecen representados de color verde). Es una de las primeras comprobaciones que hicimos para evaluar que los costes de las baldosas funcionaban correctamente. Haz **click en la imagen** que aparece a continuación para ver el **vídeo de la prueba**:
 
-![Prueba_Hilo_Linea_Recta](https://user-images.githubusercontent.com/48771457/114747354-095e0300-9d51-11eb-9c9f-7407c3ac63ee.png)
-[![alt text](http://img.youtube.com/vi/QxFtuxsBPC8/0.jpg)](https://www.youtube.com/watch?v=QxFtuxsBPC8&ab_channel=IA_UCM_Tester "Prueba: Hilo de Ariadna sin obstáculos")
+[![alt text](http://img.youtube.com/vi/QxFtuxsBPC8/0.jpg)](https://www.youtube.com/watch?v=QxFtuxsBPC8&ab_channel=IA_UCM_Tester "Click para ir al video: Prueba: Entorno Vacío")
 
 ### 4.1 Prueba en Pasillo abierto
 
-Similar en esencia a la prueba del apartado anterior, puesto que se distingue en que ahora el jugador se encuentra en un pasillo recto junto con el minotauro. Debido a que el coste de pasar por al lado del minotauro es elevado (o imposible si el pasillo es de una casilla de ancho, puesto que la casilla del minotauro no se puede atravesar), lo más lógico es que Teseo de media vuelta y llegue a la casilla de salida por el exterior de dicho pasillo puesto que este está abierto por dos extremos. En la siguiente vídeo consta un fragmento de la prueba:
+Similar en esencia a la prueba del apartado anterior, puesto que se distingue en que ahora el jugador se encuentra en un pasillo recto junto con el minotauro. Debido a que el coste de pasar por al lado del minotauro es elevado (o imposible si el pasillo es de una casilla de ancho, puesto que la casilla del minotauro no se puede atravesar), lo más lógico es que Teseo de media vuelta y llegue a la casilla de salida por el exterior de dicho pasillo puesto que este está abierto por dos extremos. Haz **click en la imagen** que aparece a continuación para ver el **vídeo de la prueba**:
 
-[![alt text](http://img.youtube.com/vi/XORXvt9_bjg/0.jpg)](https://youtu.be/XORXvt9_bjg "Prueba: Pasillo abierto")
+[![alt text](http://img.youtube.com/vi/XORXvt9_bjg/0.jpg)](https://youtu.be/XORXvt9_bjg "Click para ir al video: Prueba: Pasillo abierto")
 
-## 5 Referencias
+## 5 Recursos de terceros empleados
 - Pseudocódigo del libro: [**AI for Games, Third Edition**](https://ebookcentral.proquest.com/lib/universidadcomplutense-ebooks/detail.action?docID=5735527) de **Millington**
 
 - Código de [**Federico Peinado**](https://github.com/federicopeinado) habilitado para la asignatura.
+
+- [**Mixamo**](https://www.mixamo.com/) para las mayas y las animaciones empleadas como assets. 
