@@ -123,7 +123,8 @@ public class MinotaurMovable : MonoBehaviour
             clip.Play();
             animCtl.SetBool("agro", true);
         }
-        else { 
+        else {
+            animCtl.SetBool("agro", false);
             rend.material.color = Color.yellow;
             ptc.Stop();
         }
